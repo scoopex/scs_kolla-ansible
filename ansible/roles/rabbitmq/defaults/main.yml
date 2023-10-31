@@ -52,7 +52,14 @@ haproxy_outward_rabbitmq_server_timeout: "1h"
 rabbitmq_image: "{{ docker_registry ~ '/' if docker_registry else '' }}{{ docker_namespace }}/rabbitmq"
 rabbitmq_tag: "{{ openstack_tag }}"
 rabbitmq_image_full: "{{ rabbitmq_image }}:{{ rabbitmq_tag }}"
+
+# Rabbitmq defines a default total dimension of usable memory of
+# "5G * rabbitmq_vm_memory_high_watermark_relative" memory size used for the the broker itself.
+rabbitmq_total_memory_available_override: 5G
+# If you define a "mem_reservation" in "dimension" this value is used for rabbitmq_total_memory_available_override instead.
+# The total memory is then: "mem_reservation * rabbitmq_vm_memory_high_watermark_relative"
 rabbitmq_dimensions: "{{ default_container_dimensions }}"
+rabbitmq_vm_memory_high_watermark_relative: 0.7
 
 rabbitmq_enable_healthchecks: "{{ enable_container_healthchecks }}"
 rabbitmq_healthcheck_interval: "{{ default_container_healthcheck_interval }}"
@@ -60,6 +67,7 @@ rabbitmq_healthcheck_retries: "{{ default_container_healthcheck_retries }}"
 rabbitmq_healthcheck_start_period: "{{ default_container_healthcheck_start_period }}"
 rabbitmq_healthcheck_test: ["CMD-SHELL", "healthcheck_rabbitmq"]
 rabbitmq_healthcheck_timeout: "{{ default_container_healthcheck_timeout }}"
+
 rabbitmq_healthcheck:
   interval: "{{ rabbitmq_healthcheck_interval }}"
   retries: "{{ rabbitmq_healthcheck_retries }}"
@@ -106,6 +114,10 @@ rabbitmq_message_ttl_ms: 600000
 # If no queue expiry is specified, queues will not expire
 rabbitmq_queue_expiry_ms: 3600000
 rabbitmq_extra_config: {}
+
+# If you reduce this, the cluster can only form correctly if all rabbitmq instances of the cluster were restarted
+# For new setups it is recommended to set this to 10 seconds (will be the future default after the quorum queue migration)
+rabbitmq_net_ticktime: 60
 
 ####################
 # Plugins
