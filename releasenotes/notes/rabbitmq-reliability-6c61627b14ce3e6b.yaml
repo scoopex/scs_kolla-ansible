@@ -1,0 +1,36 @@
+---
+prelude: >
+    Reliability and performance improvements for the general RabbitMQ
+    broker configuration.  The adjustments solve or prevent potential
+    problems for the performance and reliability of the RabbitMQ Broker.
+    The changes are designed so that all types of queues used for
+    Openstack should benefit from them.
+features:
+  - |
+    Allow to set the ``net_ticktime`` (https://www.rabbitmq.com/nettick.html)
+    for faster detection of unavailable or broken nodes.
+    (default value is the standard RabbitMQ default of 60 seconds for releases
+    which do not use quorum queues)
+    It is recommended to the set the parameter ``rabbitmq_net_ticktime``
+    to 10 seconds in general, but this requires a sequential restart of
+    all RabbitMQ brokers.
+fixes:
+  - |
+    - increase the default of 2 erlang nesia table loaders to 20 for faster
+      startup times of the brokers
+    - change the default behavior of the RabbitMQ erlang scheduler-to-core
+      binding back to the erlang default, make it more suitable for mixed
+      wokloads on nodes
+    - fix RabbitMQ memory sizing to enable flow-control in
+      a meaningful way (the previous scenario assumed that to high amount
+      of node memory can be used by RabbitMQ)
+    - configure a disk free limit to ensure that there is enough memory to
+      persist messages
+    - configure queue_leader_locator to be ``client-local`` for
+      queues that are still not quorum queues
+upgrade:
+  - |
+    - It is recommended to set the parameter ``rabbitmq_net_ticktime`` to
+      10 seconds, (the future default, for faster detection of unavailable
+      or broken nodes) but this requires a sequential restart of all
+      RabbitMQ brokers.
