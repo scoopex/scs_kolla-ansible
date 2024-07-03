@@ -11,9 +11,16 @@ features:
     for faster detection of unavailable or broken nodes.
     (default value is the standard RabbitMQ default of 60 seconds for releases
     which do not use quorum queues)
+
     It is recommended to the set the parameter ``rabbitmq_net_ticktime``
-    to 10 seconds in general, but this requires a sequential restart of
-    all RabbitMQ brokers.
+    to 10 seconds in general (best practice default),
+    but this requires a sequential restart of all RabbitMQ brokers.
+
+    If you are migrating a cluster to a new setting, the cluster can only form correctly if all rabbitmq instances
+    of the cluster were restarted within a short period of time.
+    The duration of Rabbitmq nodes that have different settings should be as short as possible.
+    As soon as all nodes have the same value, nothing special needs to be taken into account.
+
 fixes:
   - |
     - increase the default of 2 erlang nesia table loaders to 20 for faster

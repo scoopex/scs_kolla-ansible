@@ -116,10 +116,19 @@ rabbitmq_message_ttl_ms: 600000
 rabbitmq_queue_expiry_ms: 3600000
 rabbitmq_extra_config: {}
 
-# If you reduce this, the cluster can only form correctly if all rabbitmq instances
-# of the cluster were restarted within a short period of time
-# For new setups it is recommended to set this to 10 seconds, therefore it will be the future default after the quorum queue migration.
+
 # The rabbitmq default value is 60 Seconds (https://www.rabbitmq.com/nettick.html#frequency)
+#
+# Lowering this value to 10 seconds is a best practice for the reliability of rabbitmq because
+# the changed value shortens the time between which a failure can be detected or also enables
+# error situations to be automatically resolved more quickly.
+#
+# For new setups it is recommended to set this to 10 seconds, therefore it will be the future default after the quorum queue migration.
+#
+# If you are migrating a cluster to a new setting, the cluster can only form correctly if all rabbitmq instances
+# of the cluster were restarted within a short period of time.
+# The duration of Rabbitmq nodes that have different settings should be as short as possible.
+# As soon as all nodes have the same value, nothing special needs to be taken into account.
 rabbitmq_net_ticktime: "{{ '10' if om_enable_rabbitmq_quorum_queues else '60' }}"
 
 ####################
